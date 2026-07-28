@@ -10,7 +10,13 @@ const App = () => {
     return localStorage.getItem('selectedCityCoordinates') || 'latitude=55.75&longitude=37.62';
   });
 
-  const weatherUrl = `https://api.open-meteo.com/v1/forecast?${selectedCity}&current=temperature_2m&daily=temperature_2m_max,temperature_2m_min&timezone=auto`;
+  const queryParams = new URLSearchParams({
+    current: 'temperature_2m',
+    daily: ['temperature_2m_max', 'temperature_2m_min'].join(','),
+    timezone: 'auto'
+  }).toString();
+
+  const weatherUrl = `https://api.open-meteo.com/v1/forecast?${selectedCity}&${queryParams}`;
   const { data: weatherData, isLoading, error, refetch } = useFetch(weatherUrl);
 
   useEffect(() => {
