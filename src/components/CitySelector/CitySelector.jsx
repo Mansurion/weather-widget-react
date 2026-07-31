@@ -8,7 +8,7 @@ const CitySelector = ({ cities, value, onChange }) => {
             onChange={(event) => onChange(event.target.value)}
         >
             {cities.map((city) => (
-                <option key={city.coordinates} value={city.coordinates}>
+                <option key={city.id} value={city.id}>
                     {city.name}
                 </option>
             ))}

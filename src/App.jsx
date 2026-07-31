@@ -5,14 +5,14 @@ import { CITIES } from './data';
 import { useWeather } from './hooks/use-weather';
 
 const App = () => {
-  const { selectedCity, setSelectedCity, weatherData, isLoading, error, refetch } = useWeather();
+  const { selectedCityId, setSelectedCityId, weatherData, isLoading, error, refetch } = useWeather();
 
   return (
     <main className="widget">
       <CitySelector
         cities={CITIES}
-        value={selectedCity}
-        onChange={setSelectedCity}
+        value={selectedCityId}
+        onChange={setSelectedCityId}
       />
       <WeatherDisplay
         weatherData={weatherData}
