@@ -1,17 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 export const useFetch = (url) => {
     const [weatherData, setWeatherData] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const fetchData = async () => {
+    const [updater, setUpdater] = useState(0);
+
+    const fetchData = useCallback(async () => {
         if (!url) return;
         setIsLoading(true);
         setError(null);
 
         try {
-            const response = await fetch(url);
+            const cacheBusterUrl = new URL(url);
+            cacheBusterUrl.searchParams.set('_t', Date.now());
+
+            const response = await fetch(cacheBusterUrl.toString());
 
             if (!response.ok) {
                 throw new Error(`Ошибка сервера: ${response.status}`);
@@ -25,11 +30,15 @@ export const useFetch = (url) => {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [url]);
+
+    const refetch = useCallback(() => {
+        setUpdater((prev) => prev + 1);
+    }, []);
 
     useEffect(() => {
         fetchData();
-    }, [url]);
+    }, [fetchData, updater]);
 
-    return { data: weatherData, isLoading, error, refetch: fetchData };
+    return { data: weatherData, isLoading, error, refetch };
 };

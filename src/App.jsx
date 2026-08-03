@@ -1,27 +1,18 @@
-import { useState, useEffect, } from 'react';
 import CitySelector from './components/CitySelector/CitySelector';
 import WeatherDisplay from './components/WeatherDisplay/WeatherDisplay';
 import './App.css';
 import { CITIES } from './data';
-import { useFetch } from './hooks/use-fetch';
+import { useWeather } from './hooks/use-weather';
 
 const App = () => {
-  const [selectedCity, setSelectedCity] = useState(() => {
-    return localStorage.getItem('selectedCityCoordinates') || 'latitude=55.75&longitude=37.62';
-  });
-
-  const weatherUrl = `https://api.open-meteo.com/v1/forecast?${selectedCity}&current=temperature_2m&daily=temperature_2m_max,temperature_2m_min&timezone=auto`;
-  const { data: weatherData, isLoading, error, refetch } = useFetch(weatherUrl);
-
-  useEffect(() => {
-    localStorage.setItem('selectedCityCoordinates', selectedCity);
-  }, [selectedCity]);
+  const { selectedCityId, setSelectedCityId, weatherData, isLoading, error, refetch } = useWeather();
 
   return (
     <main className="widget">
-      <CitySelector cities={CITIES}
-        value={selectedCity}
-        onChange={setSelectedCity}
+      <CitySelector
+        cities={CITIES}
+        value={selectedCityId}
+        onChange={setSelectedCityId}
       />
       <WeatherDisplay
         weatherData={weatherData}
