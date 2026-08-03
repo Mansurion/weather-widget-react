@@ -1,32 +1,25 @@
-import CitySelector from './components/CitySelector/CitySelector';
-import WeatherDisplay from './components/WeatherDisplay/WeatherDisplay';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { ROUTES } from './constants/routes';
+import CityListPage from './pages/CityListPage/CityListPage';
+import CityDetailPage from './pages/CityDetailPage/CityDetailPage';
 import './App.css';
-import { CITIES } from './data';
-import { useWeather } from './hooks/use-weather';
+
+const router = createBrowserRouter([
+  {
+    path: ROUTES.HOME,
+    element: <CityListPage />,
+  },
+  {
+    path: ROUTES.CITY_DETAILS,
+    element: <CityDetailPage />,
+  },
+]);
 
 const App = () => {
-  const { selectedCityId, setSelectedCityId, weatherData, isLoading, error, refetch } = useWeather();
-
   return (
-    <main className="widget">
-      <CitySelector
-        cities={CITIES}
-        value={selectedCityId}
-        onChange={setSelectedCityId}
-      />
-      <WeatherDisplay
-        weatherData={weatherData}
-        isLoading={isLoading}
-        error={error}
-      />
-      <button
-        id="refresh-data-btn"
-        disabled={isLoading}
-        onClick={refetch}
-      >
-        {isLoading ? 'Секунду...' : 'Обновить данные'}
-      </button>
-    </main>
+    <div className="widget">
+      <RouterProvider router={router} />
+    </div>
   );
 };
 

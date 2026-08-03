@@ -1,0 +1,30 @@
+.city-detail-page {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+}
+
+.back-btn {
+    align-self: flex-start;
+    background-color: #35363a;
+    color: #8ab4f8;
+    text-decoration: none;
+    padding: 8px 14px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    border: 1px solid #4f5357;
+    font-weight: 500;
+    margin-bottom: 15px;
+    transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+    background-color: #3c4043;
+    border-color: #8ab4f8;
+}
+
+.back-btn:active {
+    transform: scale(0.98);
+}

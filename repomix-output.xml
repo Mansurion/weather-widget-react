@@ -32,7 +32,7 @@ The content is organized as follows:
 <notes>
 - Some files may have been excluded based on .gitignore rules and Repomix's configuration
 - Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
-- Files matching these patterns are excluded: package-lock.json, repomix-output.xml, .repomixignore, *.svg, *.png, *.jpg, *.jpeg
+- Files matching these patterns are excluded: package-lock.json, repomix-output.xml, .repomixignore, *.svg, *.png, *.jpg, *.jpeg, package-lock.json, repomix-output.xml, .repomixignore, *.svg, *.png, *.jpg, *.jpeg
 - Files matching patterns in .gitignore are excluded
 - Files matching default ignore patterns are excluded
 - Files are sorted by Git change count (files with more changes are at the bottom)
@@ -50,15 +50,22 @@ src/
     react.svg
     vite.svg
   components/
-    CitySelector/
-      CitySelector.css
-      CitySelector.jsx
     WeatherDisplay/
       WeatherDisplay.css
       WeatherDisplay.jsx
+  constants/
+    routes.js
   hooks/
+    use-city-search.js
     use-fetch.js
     use-weather.js
+  pages/
+    CityDetailPage/
+      CityDetailPage.css
+      CityDetailPage.jsx
+    CityListPage/
+      CityListPage.css
+      CityListPage.jsx
   utils/
     weatherAdapter.js
   App.css
@@ -78,86 +85,307 @@ vite.config.js
 <files>
 This section contains the contents of the repository's files.
 
-<file path="src/utils/weatherAdapter.js">
-const DAYS_OF_WEEK = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+<file path="src/constants/routes.js">
+export const ROUTES = Object.freeze({
+    HOME: '/',
+    CITY_DETAILS: '/city/:cityName/:lat/:lon',
+});
+</file>
 
-export const prepareWeatherData = (rawResponse) => {
-    if (!rawResponse) return null;
+<file path="src/hooks/use-city-search.js">
+import { useState, useEffect } from 'react';
 
-    const currentTemp = Math.round(rawResponse.current.temperature_2m);
-    const { time, temperature_2m_min, temperature_2m_max } = rawResponse.daily;
+export const useCitySearch = (query) => {
+    const [cities, setCities] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-    const forecast = time.slice(0, 7).map((dateString, index) => {
-        const dateObj = new Date(dateString);
-        const minTemp = Math.round(temperature_2m_min[index]);
-        const maxTemp = Math.round(temperature_2m_max[index]);
+    useEffect(() => {
+        // Если запрос слишком короткий, очищаем список результатов
+        if (query.trim().length < 2) {
+            setCities([]);
+            return;
+        }
 
-        return {
-            id: dateString,
-            dayLabel: index === 0 ? 'Сегодня' : DAYS_OF_WEEK[dateObj.getDay()],
-            minTemperatureText: `${minTemp > 0 ? '+' : ''}${minTemp}°`,
-            maxTemperatureText: `${maxTemp > 0 ? '+' : ''}${maxTemp}°`
+        const controller = new AbortController();
+
+        const searchCities = async () => {
+            setIsLoading(true);
+            setError(null);
+
+            try {
+                const queryParams = new URLSearchParams({
+                    name: query,
+                    count: '5',
+                    language: 'ru',
+                }).toString();
+
+                const url = `https://geocoding-api.open-meteo.com/v1/search?${queryParams}`;
+
+                const response = await fetch(url, { signal: controller.signal });
+                if (!response.ok) throw new Error('Ошибка поиска городов');
+
+                const data = await response.json();
+
+                // Безопасно маппим результаты (сервер может вернуть undefined, если ничего не найдено)
+                const mappedCities = (data.results || []).map((item) => ({
+                    id: String(item.id),
+                    name: item.name,
+                    country: item.country || '',
+                    admin: item.admin1 || '', // Область/регион
+                    latitude: item.latitude,
+                    longitude: item.longitude,
+                }));
+
+                setCities(mappedCities);
+            } catch (err) {
+                if (err.name === 'AbortError') return;
+                setError('Не удалось загрузить список городов');
+            } finally {
+                setIsLoading(false);
+            }
         };
-    });
 
-    return {
-        currentTemperatureText: `${currentTemp > 0 ? '+' : ''}${currentTemp}°`,
-        forecast
-    };
+        // Реализуем простейший Debounce (задержку запроса), чтобы не спамить сервер на каждую букву
+        const debounceTimer = setTimeout(() => {
+            searchCities();
+        }, 500);
+
+        return () => {
+            clearTimeout(debounceTimer);
+            controller.abort(); // Отменяем старый сетевой запрос, если пользователь продолжает печатать
+        };
+    }, [query]);
+
+    return { cities, isLoading, error };
 };
 </file>
 
-<file path="repomix.config.json">
-{
-  "input": {
-    "maxFileSize": 52428800
-  },
-  "output": {
-    "filePath": "repomix-output.xml",
-    "style": "xml",
-    "filePathStyle": "target-relative",
-    "parsableStyle": false,
-    "fileSummary": true,
-    "directoryStructure": true,
-    "files": true,
-    "removeComments": false,
-    "removeEmptyLines": false,
-    "compress": false,
-    "topFilesLength": 5,
-    "showLineNumbers": false,
-    "truncateBase64": false,
-    "copyToClipboard": false,
-    "includeFullDirectoryStructure": false,
-    "tokenCountTree": false,
-    "git": {
-      "sortByChanges": true,
-      "sortByChangesMaxCommits": 100,
-      "includeDiffs": false,
-      "includeLogs": false,
-      "includeLogsCount": 50
-    }
-  },
-  "include": [],
-  "ignore": {
-    "customPatterns": [
-      "package-lock.json",
-      "repomix-output.xml",
-      ".repomixignore",
-      "*.svg",
-      "*.png",
-      "*.jpg",
-      "*.jpeg"
-    ],
-    "useGitignore": true,
-    "useDefaultPatterns": true
-  },
-  "security": {
-    "enableSecurityCheck": true
-  },
-  "tokenCount": {
-    "encoding": "o200k_base"
-  }
+<file path="src/pages/CityDetailPage/CityDetailPage.css">
+.city-detail-page {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
 }
+
+.back-btn {
+    align-self: flex-start;
+    background-color: #35363a;
+    color: #8ab4f8;
+    text-decoration: none;
+    padding: 8px 14px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    border: 1px solid #4f5357;
+    font-weight: 500;
+    margin-bottom: 15px;
+    transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+    background-color: #3c4043;
+    border-color: #8ab4f8;
+}
+
+.back-btn:active {
+    transform: scale(0.98);
+}
+</file>
+
+<file path="src/pages/CityDetailPage/CityDetailPage.jsx">
+import { useParams, Link } from 'react-router-dom';
+import WeatherDisplay from '../../components/WeatherDisplay/WeatherDisplay';
+import { useWeather } from '../../hooks/use-weather';
+import { ROUTES } from '../../constants/routes';
+import './CityDetailPage.css';
+
+const CityDetailPage = () => {
+    const { lat, lon } = useParams();
+    const { weatherData, isLoading, error, refetch } = useWeather(lat, lon);
+
+    return (
+        <div className="city-detail-page">
+            {/* Кнопка возврата на главную страницу */}
+            <Link to={ROUTES.HOME} className="back-btn">
+                ← К поиску
+            </Link>
+
+            <WeatherDisplay weatherData={weatherData} isLoading={isLoading} error={error} />
+
+            <button
+                id="refresh-data-btn"
+                disabled={isLoading}
+                onClick={refetch}
+            >
+                {isLoading ? 'Секунду...' : 'Обновить данные'}
+            </button>
+        </div>
+    );
+};
+
+export default CityDetailPage;
+</file>
+
+<file path="src/pages/CityListPage/CityListPage.css">
+.city-list-page {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-sizing: border-box;
+  flex-grow: 1;
+}
+
+
+.city-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    /* Растягиваем контейнер карточек */
+    box-sizing: border-box;
+}
+
+
+.search-input {
+    background-color: #35363a;
+    color: #ffffff;
+    border: 1px solid #4f5357;
+    padding: 12px 14px;
+    font-size: 1rem;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 100%;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease;
+}
+
+
+.search-input:focus {
+    border-color: #8ab4f8;
+}
+
+.city-card-link {
+    display: block;
+    background-color: #35363a;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1px solid #4f5357;
+    font-size: 1.1rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.city-card-link:hover {
+    background-color: #3c4043;
+    border-color: #8ab4f8;
+}
+
+.welcome-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  animation: fadeIn 0.3s ease-in-out;
+  width: 100%; /* Форсируем растяжение пустого экрана на всю ширину виджета */
+  box-sizing: border-box;
+}
+
+
+.welcome-icon {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    opacity: 0.7;
+}
+
+.welcome-text {
+    color: #9aa0a6;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin: 0;
+    max-width: 240px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</file>
+
+<file path="src/pages/CityListPage/CityListPage.jsx">
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useCitySearch } from '../../hooks/use-city-search';
+import './CityListPage.css';
+
+const CityListPage = () => {
+    const [searchQuery, setSearchQuery] = useState('');
+    const { cities, isLoading, error } = useCitySearch(searchQuery);
+
+    return (
+        <div className="city-list-page">
+            <input
+                type="text"
+                id="city-search"
+                name="citySearch"
+                className="search-input"
+                placeholder="Введите название города..."
+                aria-label="Поиск города"
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+            />
+
+
+            <div className="city-list-container">
+                {/* Начальный экран-подсказка, когда поиск еще не начался */}
+                {searchQuery.trim().length === 0 && (
+                    <div className="welcome-state">
+                        <div className="welcome-icon">🔍</div>
+                        <p className="welcome-text">Начните вводить название города, чтобы узнать погоду</p>
+                    </div>
+                )}
+
+                {isLoading && <div className="loading">Ищем города...</div>}
+                {error && <div className="loading error">{error}</div>}
+
+                {!isLoading && !error && cities.length === 0 && searchQuery.trim().length >= 2 && (
+                    <div className="loading">Города не найдены</div>
+                )}
+
+                {!isLoading && !error && cities.map((city) => {
+                    const regionText = city.admin ? `, ${city.admin}` : '';
+                    const countryText = city.country ? ` (${city.country})` : '';
+
+                    return (
+                        <Link
+                            key={city.id}
+                            to={`/city/${encodeURIComponent(city.name)}/${city.latitude}/${city.longitude}`}
+                            className="city-card-link"
+                        >
+                            {city.name}{regionText}{countryText}
+                        </Link>
+                    );
+                })}
+            </div>
+        </div>
+    );
+};
+
+export default CityListPage;
 </file>
 
 <file path="public/favicon.svg">
@@ -197,69 +425,6 @@ export const prepareWeatherData = (rawResponse) => {
 
 <file path="src/assets/vite.svg">
 <svg xmlns="http://www.w3.org/2000/svg" width="77" height="47" fill="none" aria-labelledby="vite-logo-title" viewBox="0 0 77 47"><title id="vite-logo-title">Vite</title><style>.parenthesis{fill:#000}@media (prefers-color-scheme:dark){.parenthesis{fill:#fff}}</style><path fill="#9135ff" d="M40.151 45.71c-.663.844-2.02.374-2.02-.699V34.708a2.26 2.26 0 0 0-2.262-2.262H24.493c-.92 0-1.457-1.04-.92-1.788l7.479-10.471c1.07-1.498 0-3.578-1.842-3.578H15.443c-.92 0-1.456-1.04-.92-1.788l9.696-13.576c.213-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.472c-1.07 1.497 0 3.578 1.842 3.578h11.376c.944 0 1.474 1.087.89 1.83L40.153 45.712z"/><mask id="a" width="48" height="47" x="14" y="0" maskUnits="userSpaceOnUse" style="mask-type:alpha"><path fill="#000" d="M40.047 45.71c-.663.843-2.02.374-2.02-.699V34.708a2.26 2.26 0 0 0-2.262-2.262H24.389c-.92 0-1.457-1.04-.92-1.788l7.479-10.472c1.07-1.497 0-3.578-1.842-3.578H15.34c-.92 0-1.456-1.04-.92-1.788l9.696-13.575c.213-.297.556-.474.92-.474H53.93c.92 0 1.456 1.04.92 1.788L47.37 13.03c-1.07 1.498 0 3.578 1.842 3.578h11.376c.944 0 1.474 1.088.89 1.831L40.049 45.712z"/></mask><g mask="url(#a)"><g filter="url(#b)"><ellipse cx="5.508" cy="14.704" fill="#eee6ff" rx="5.508" ry="14.704" transform="rotate(269.814 20.96 11.29)scale(-1 1)"/></g><g filter="url(#c)"><ellipse cx="10.399" cy="29.851" fill="#eee6ff" rx="10.399" ry="29.851" transform="rotate(89.814 -16.902 -8.275)scale(1 -1)"/></g><g filter="url(#d)"><ellipse cx="5.508" cy="30.487" fill="#8900ff" rx="5.508" ry="30.487" transform="rotate(89.814 -19.197 -7.127)scale(1 -1)"/></g><g filter="url(#e)"><ellipse cx="5.508" cy="30.599" fill="#8900ff" rx="5.508" ry="30.599" transform="rotate(89.814 -25.928 4.177)scale(1 -1)"/></g><g filter="url(#f)"><ellipse cx="5.508" cy="30.599" fill="#8900ff" rx="5.508" ry="30.599" transform="rotate(89.814 -25.738 5.52)scale(1 -1)"/></g><g filter="url(#g)"><ellipse cx="14.072" cy="22.078" fill="#eee6ff" rx="14.072" ry="22.078" transform="rotate(93.35 31.245 55.578)scale(-1 1)"/></g><g filter="url(#h)"><ellipse cx="3.47" cy="21.501" fill="#8900ff" rx="3.47" ry="21.501" transform="rotate(89.009 35.419 55.202)scale(-1 1)"/></g><g filter="url(#i)"><ellipse cx="3.47" cy="21.501" fill="#8900ff" rx="3.47" ry="21.501" transform="rotate(89.009 35.419 55.202)scale(-1 1)"/></g><g filter="url(#j)"><ellipse cx="14.592" cy="9.743" fill="#8900ff" rx="4.407" ry="29.108" transform="rotate(39.51 14.592 9.743)"/></g><g filter="url(#k)"><ellipse cx="61.728" cy="-5.321" fill="#8900ff" rx="4.407" ry="29.108" transform="rotate(37.892 61.728 -5.32)"/></g><g filter="url(#l)"><ellipse cx="55.618" cy="7.104" fill="#00c2ff" rx="5.971" ry="9.665" transform="rotate(37.892 55.618 7.104)"/></g><g filter="url(#m)"><ellipse cx="12.326" cy="39.103" fill="#8900ff" rx="4.407" ry="29.108" transform="rotate(37.892 12.326 39.103)"/></g><g filter="url(#n)"><ellipse cx="12.326" cy="39.103" fill="#8900ff" rx="4.407" ry="29.108" transform="rotate(37.892 12.326 39.103)"/></g><g filter="url(#o)"><ellipse cx="49.857" cy="30.678" fill="#8900ff" rx="4.407" ry="29.108" transform="rotate(37.892 49.857 30.678)"/></g><g filter="url(#p)"><ellipse cx="52.623" cy="33.171" fill="#00c2ff" rx="5.971" ry="15.297" transform="rotate(37.892 52.623 33.17)"/></g></g><path d="M6.919 0c-9.198 13.166-9.252 33.575 0 46.789h6.215c-9.25-13.214-9.196-33.623 0-46.789zm62.424 0h-6.215c9.198 13.166 9.252 33.575 0 46.789h6.215c9.25-13.214 9.196-33.623 0-46.789" class="parenthesis"/><defs><filter id="b" width="60.045" height="41.654" x="-5.564" y="16.92" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="7.659"/></filter><filter id="c" width="90.34" height="51.437" x="-40.407" y="-6.762" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="7.659"/></filter><filter id="d" width="79.355" height="29.4" x="-35.435" y="2.801" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="4.596"/></filter><filter id="e" width="79.579" height="29.4" x="-30.84" y="20.8" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="4.596"/></filter><filter id="f" width="79.579" height="29.4" x="-29.307" y="21.949" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="4.596"/></filter><filter id="g" width="74.749" height="58.852" x="29.961" y="-17.13" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="7.659"/></filter><filter id="h" width="61.377" height="25.362" x="37.754" y="3.055" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="4.596"/></filter><filter id="i" width="61.377" height="25.362" x="37.754" y="3.055" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="4.596"/></filter><filter id="j" width="56.045" height="63.649" x="-13.43" y="-22.082" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="4.596"/></filter><filter id="k" width="54.814" height="64.646" x="34.321" y="-37.644" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="4.596"/></filter><filter id="l" width="33.541" height="35.313" x="38.847" y="-10.552" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="4.596"/></filter><filter id="m" width="54.814" height="64.646" x="-15.081" y="6.78" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="4.596"/></filter><filter id="n" width="54.814" height="64.646" x="-15.081" y="6.78" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="4.596"/></filter><filter id="o" width="54.814" height="64.646" x="22.45" y="-1.645" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="4.596"/></filter><filter id="p" width="39.409" height="43.623" x="32.919" y="11.36" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="4.596"/></filter></defs></svg>
-</file>
-
-<file path="src/components/CitySelector/CitySelector.css">
-.city-select {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-color: #35363a;
-    color: #ffffff;
-    border: 1px solid #4f5357;
-    padding: 12px 40px 12px 16px;
-    font-size: 1.1rem;
-    border-radius: 10px;
-    width: 100%;
-    cursor: pointer;
-    outline: none;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27292.4%27%20height%3D%27292.4%27%3E%3Cpath%20fill%3D%27%23ffffff%27%20d%3D%27M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%27%2F%3E%3C%2Fsvg%3E");
-    background-repeat: no-repeat;
-    background-position: right 16px top 50%;
-    background-size: 12px auto;
-    transition: all 0.25s ease;
-    margin-bottom: 15px;
-    flex-shrink: 0;
-}
-
-.city-select:hover {
-    background-color: #3c4043;
-    border-color: #8ab4f8;
-}
-
-.city-select:focus {
-    border-color: #8ab4f8;
-    box-shadow: 0 0 0 3px rgba(138, 180, 248, 0.2);
-}
-
-.city-select option {
-    background-color: #292a2d;
-    color: #e8eaed;
-}
-</file>
-
-<file path="src/components/CitySelector/CitySelector.jsx">
-import './CitySelector.css';
-
-const CitySelector = ({ cities, value, onChange }) => {
-    return (
-        <select
-            className="city-select"
-            value={value}
-            onChange={(event) => onChange(event.target.value)}
-        >
-            {cities.map((city) => (
-                <option key={city.id} value={city.id}>
-                    {city.name}
-                </option>
-            ))}
-        </select>
-    );
-};
-
-export default CitySelector;
 </file>
 
 <file path="src/components/WeatherDisplay/WeatherDisplay.css">
@@ -335,126 +500,31 @@ export default CitySelector;
 }
 </file>
 
-<file path="src/components/WeatherDisplay/WeatherDisplay.jsx">
-import './WeatherDisplay.css';
+<file path="src/utils/weatherAdapter.js">
+const DAYS_OF_WEEK = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
 
-const WeatherDisplay = ({ weatherData, isLoading, error }) => {
-    if (isLoading) {
-        return <div className="loading">Связь с метео-сервером...</div>;
-    }
+export const prepareWeatherData = (rawResponse) => {
+    if (!rawResponse) return null;
 
-    if (error) {
-        return <div className="loading">Ошибка получения данных</div>;
-    }
+    const currentTemp = Math.round(rawResponse.current.temperature_2m);
+    const { time, temperature_2m_min, temperature_2m_max } = rawResponse.daily;
 
-    if (!weatherData) return null;
+    const forecast = time.slice(0, 7).map((dateString, index) => {
+        const dateObj = new Date(dateString);
+        const minTemp = Math.round(temperature_2m_min[index]);
+        const maxTemp = Math.round(temperature_2m_max[index]);
 
-    return (
-        <div className="weather-info">
-            <div className="current-temp-block">
-                <span className="current-label">Сейчас</span>
-                <span className="current-value">{weatherData.currentTemperatureText}</span>
-            </div>
-
-            {weatherData.forecast.map(({ id, dayLabel, minTemperatureText, maxTemperatureText }) => (
-                <div className="forecast-row" key={id}>
-                    <span className="day-name">{dayLabel}</span>
-                    <span className="day-temp">
-                        {minTemperatureText} / {maxTemperatureText}
-                    </span>
-                </div>
-            ))}
-        </div>
-    );
-};
-
-export default WeatherDisplay;
-</file>
-
-<file path="src/hooks/use-fetch.js">
-import { useState, useEffect, useCallback } from 'react';
-
-export const useFetch = (url) => {
-    const [weatherData, setWeatherData] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
-
-    const [updater, setUpdater] = useState(0);
-
-    const fetchData = useCallback(async () => {
-        if (!url) return;
-        setIsLoading(true);
-        setError(null);
-
-        try {
-            const cacheBusterUrl = new URL(url);
-            cacheBusterUrl.searchParams.set('_t', Date.now());
-
-            const response = await fetch(cacheBusterUrl.toString());
-
-            if (!response.ok) {
-                throw new Error(`Ошибка сервера: ${response.status}`);
-            }
-
-            const data = await response.json();
-            setWeatherData(data);
-        } catch (err) {
-            console.log('Ошибка сети:', err);
-            setError('Ошибка получения данных');
-        } finally {
-            setIsLoading(false);
-        }
-    }, [url]);
-
-    const refetch = useCallback(() => {
-        setUpdater((prev) => prev + 1);
-    }, []);
-
-    useEffect(() => {
-        fetchData();
-    }, [fetchData, updater]);
-
-    return { data: weatherData, isLoading, error, refetch };
-};
-</file>
-
-<file path="src/hooks/use-weather.js">
-import { useState, useEffect } from 'react';
-import { useFetch } from './use-fetch';
-import { CITIES } from '../data';
-import { prepareWeatherData } from '../utils/weatherAdapter';
-
-export const useWeather = () => {
-    const [selectedCityId, setSelectedCityId] = useState(() => {
-        return localStorage.getItem('selectedCityId') || 'msk';
+        return {
+            id: dateString,
+            dayLabel: index === 0 ? 'Сегодня' : DAYS_OF_WEEK[dateObj.getDay()],
+            minTemperatureText: `${minTemp > 0 ? '+' : ''}${minTemp}°`,
+            maxTemperatureText: `${maxTemp > 0 ? '+' : ''}${maxTemp}°`
+        };
     });
 
-    const currentCity = CITIES.find((city) => city.id === selectedCityId) || CITIES[0];
-
-    const queryParams = new URLSearchParams({
-        latitude: currentCity.latitude,
-        longitude: currentCity.longitude,
-        current: 'temperature_2m',
-        daily: 'temperature_2m_max,temperature_2m_min',
-        timezone: 'auto'
-    }).toString();
-
-    const weatherUrl = `https://api.open-meteo.com/v1/forecast?${queryParams}`;
-    const { data: rawWeatherData, isLoading, error, refetch } = useFetch(weatherUrl);
-
-    const weatherData = prepareWeatherData(rawWeatherData);
-
-    useEffect(() => {
-        localStorage.setItem('selectedCityId', selectedCityId);
-    }, [selectedCityId]);
-
     return {
-        selectedCityId,
-        setSelectedCityId,
-        weatherData,
-        isLoading,
-        error,
-        refetch
+        currentTemperatureText: `${currentTemp > 0 ? '+' : ''}${currentTemp}°`,
+        forecast
     };
 };
 </file>
@@ -465,15 +535,14 @@ export const useWeather = () => {
     padding: 25px;
     border-radius: 20px;
     border: 1px solid #3c4043;
-    width: 50%;
-    max-width: 450px;
-    min-width: 290px;
-    height: 460px;
+    width: 550px;
+    min-height: 480px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
     justify-content: flex-start;
     box-sizing: border-box;
+    margin: 0 auto;
 }
 
 @media (max-width: 480px) {
@@ -516,6 +585,267 @@ export const useWeather = () => {
     cursor: not-allowed;
     opacity: 0.7;
 }
+</file>
+
+<file path="src/index.css">
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background-color: #202124;
+    color: #e8eaed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+}
+</file>
+
+<file path="src/main.jsx">
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.jsx'
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
+</file>
+
+<file path=".gitignore">
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+</file>
+
+<file path="index.html">
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>weather-widget-react</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+</file>
+
+<file path="README.md">
+# React + Vite
+
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+
+Currently, two official plugins are available:
+
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+
+## React Compiler
+
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+
+## Expanding the ESLint configuration
+
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+</file>
+
+<file path="repomix.config.json">
+{
+  "input": {
+    "maxFileSize": 52428800
+  },
+  "output": {
+    "filePath": "repomix-output.xml",
+    "style": "xml",
+    "filePathStyle": "target-relative",
+    "parsableStyle": false,
+    "fileSummary": true,
+    "directoryStructure": true,
+    "files": true,
+    "removeComments": false,
+    "removeEmptyLines": false,
+    "compress": false,
+    "topFilesLength": 5,
+    "showLineNumbers": false,
+    "truncateBase64": false,
+    "copyToClipboard": false,
+    "includeFullDirectoryStructure": false,
+    "tokenCountTree": false,
+    "git": {
+      "sortByChanges": true,
+      "sortByChangesMaxCommits": 100,
+      "includeDiffs": false,
+      "includeLogs": false,
+      "includeLogsCount": 50
+    }
+  },
+  "include": [],
+  "ignore": {
+    "customPatterns": [
+      "package-lock.json",
+      "repomix-output.xml",
+      ".repomixignore",
+      "*.svg",
+      "*.png",
+      "*.jpg",
+      "*.jpeg"
+    ],
+    "useGitignore": true,
+    "useDefaultPatterns": true
+  },
+  "security": {
+    "enableSecurityCheck": true
+  },
+  "tokenCount": {
+    "encoding": "o200k_base"
+  }
+}
+</file>
+
+<file path="vite.config.js">
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react()],
+})
+</file>
+
+<file path="src/components/WeatherDisplay/WeatherDisplay.jsx">
+import './WeatherDisplay.css';
+
+const WeatherDisplay = ({ weatherData, isLoading, error }) => {
+    if (isLoading) {
+        return <div className="loading">Связь с метео-сервером...</div>;
+    }
+
+    if (error) {
+        return <div className="loading">Ошибка получения данных</div>;
+    }
+
+    if (!weatherData) return null;
+
+    return (
+        <div className="weather-info">
+            <div className="current-temp-block">
+                <span className="current-label">Сейчас</span>
+                <span className="current-value">{weatherData.currentTemperatureText}</span>
+            </div>
+
+            {weatherData.forecast.map(({ id, dayLabel, minTemperatureText, maxTemperatureText }) => (
+                <div className="forecast-row" key={id}>
+                    <span className="day-name">{dayLabel}</span>
+                    <span className="day-temp">
+                        {minTemperatureText} / {maxTemperatureText}
+                    </span>
+                </div>
+            ))}
+        </div>
+    );
+};
+
+export default WeatherDisplay;
+</file>
+
+<file path="src/hooks/use-fetch.js">
+import { useState, useEffect, useCallback } from 'react';
+
+export const useFetch = (url) => {
+    const [data, setData] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [updater, setUpdater] = useState(0);
+
+    const refetch = useCallback(() => {
+        setUpdater((prev) => prev + 1);
+    }, []);
+
+    useEffect(() => {
+        if (!url) return;
+
+        const controller = new AbortController();
+
+        const fetchData = async () => {
+            setIsLoading(true);
+            setError(null);
+
+            try {
+                const response = await fetch(url, { signal: controller.signal });
+
+                if (!response.ok) {
+                    throw new Error(`Ошибка сервера: ${response.status}`);
+                }
+
+                const json = await response.json();
+                setData(json);
+            } catch (err) {
+                if (err.name === 'AbortError') return;
+                setError(err.message || 'Не удалось загрузить данные');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchData();
+
+        return () => {
+            controller.abort();
+        };
+    }, [url, updater]);
+
+    return { data, isLoading, error, refetch };
+};
+</file>
+
+<file path="src/hooks/use-weather.js">
+import { useFetch } from './use-fetch';
+import { prepareWeatherData } from '../utils/weatherAdapter';
+
+// Хук принимает широту и долготу из URL параметров
+export const useWeather = (latitude, longitude) => {
+    const queryParams = new URLSearchParams({
+        latitude,
+        longitude,
+        current: 'temperature_2m',
+        daily: 'temperature_2m_max,temperature_2m_min',
+        timezone: 'auto'
+    }).toString();
+
+    const weatherUrl = `https://api.open-meteo.com/v1/forecast?${queryParams}`;
+    const { data: rawWeatherData, isLoading, error, refetch } = useFetch(weatherUrl);
+    const weatherData = prepareWeatherData(rawWeatherData);
+
+    return { weatherData, isLoading, error, refetch };
+};
 </file>
 
 <file path="src/data.js">
@@ -583,61 +913,6 @@ export const CITIES = [
 ];
 </file>
 
-<file path="src/index.css">
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-    background-color: #202124;
-    color: #e8eaed;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    padding: 20px;
-    box-sizing: border-box;
-}
-</file>
-
-<file path="src/main.jsx">
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
-
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
-</file>
-
-<file path=".gitignore">
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-</file>
-
 <file path="eslint.config.js">
 import js from '@eslint/js'
 import globals from 'globals'
@@ -694,22 +969,6 @@ export default defineConfig([
 ])
 </file>
 
-<file path="index.html">
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>weather-widget-react</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
-</html>
-</file>
-
 <file path="package.json">
 {
   "name": "weather-widget-react",
@@ -725,7 +984,8 @@ export default defineConfig([
   },
   "dependencies": {
     "react": "^19.2.7",
-    "react-dom": "^19.2.7"
+    "react-dom": "^19.2.7",
+    "react-router-dom": "^7.18.2"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -743,65 +1003,29 @@ export default defineConfig([
 }
 </file>
 
-<file path="README.md">
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-</file>
-
-<file path="vite.config.js">
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-
-// https://vite.dev/config/
-export default defineConfig({
-  plugins: [react()],
-})
-</file>
-
 <file path="src/App.jsx">
-import CitySelector from './components/CitySelector/CitySelector';
-import WeatherDisplay from './components/WeatherDisplay/WeatherDisplay';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { ROUTES } from './constants/routes';
+import CityListPage from './pages/CityListPage/CityListPage';
+import CityDetailPage from './pages/CityDetailPage/CityDetailPage';
 import './App.css';
-import { CITIES } from './data';
-import { useWeather } from './hooks/use-weather';
+
+const router = createBrowserRouter([
+  {
+    path: ROUTES.HOME,
+    element: <CityListPage />,
+  },
+  {
+    path: ROUTES.CITY_DETAILS,
+    element: <CityDetailPage />,
+  },
+]);
 
 const App = () => {
-  const { selectedCityId, setSelectedCityId, weatherData, isLoading, error, refetch } = useWeather();
-
   return (
-    <main className="widget">
-      <CitySelector
-        cities={CITIES}
-        value={selectedCityId}
-        onChange={setSelectedCityId}
-      />
-      <WeatherDisplay
-        weatherData={weatherData}
-        isLoading={isLoading}
-        error={error}
-      />
-      <button
-        id="refresh-data-btn"
-        disabled={isLoading}
-        onClick={refetch}
-      >
-        {isLoading ? 'Секунду...' : 'Обновить данные'}
-      </button>
-    </main>
+    <div className="widget">
+      <RouterProvider router={router} />
+    </div>
   );
 };
 
