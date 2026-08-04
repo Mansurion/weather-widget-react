@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { CITIES } from '../data';
+import { geoService } from '../api/geoService';
 
 export const useCitySearch = (query) => {
     const [cities, setCities] = useState([]);
@@ -6,59 +8,45 @@ export const useCitySearch = (query) => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        // Если запрос слишком короткий, очищаем список результатов
-        if (query.trim().length < 2) {
-            setCities([]);
+        const trimmedQuery = query.trim();
+
+        // 1. Быстрый возврат для пустого инпута — берем локальные данные
+        if (trimmedQuery.length === 0) {
+            setCities(CITIES.slice(0, 10));
+            setIsLoading(false);
+            setError(null);
+            return;
+        }
+
+        // 2. Игнорируем ввод из одного символа
+        if (trimmedQuery.length === 1) {
             return;
         }
 
         const controller = new AbortController();
 
-        const searchCities = async () => {
+        const fetchCities = async () => {
             setIsLoading(true);
             setError(null);
-
             try {
-                const queryParams = new URLSearchParams({
-                    name: query,
-                    count: '5',
-                    language: 'ru',
-                }).toString();
-
-                const url = `https://geocoding-api.open-meteo.com/v1/search?${queryParams}`;
-
-                const response = await fetch(url, { signal: controller.signal });
-                if (!response.ok) throw new Error('Ошибка поиска городов');
-
-                const data = await response.json();
-
-                // Безопасно маппим результаты (сервер может вернуть undefined, если ничего не найдено)
-                const mappedCities = (data.results || []).map((item) => ({
-                    id: String(item.id),
-                    name: item.name,
-                    country: item.country || '',
-                    admin: item.admin1 || '', // Область/регион
-                    latitude: item.latitude,
-                    longitude: item.longitude,
-                }));
-
-                setCities(mappedCities);
+                // 3. Вызываем изолированный инфраструктурный сервис
+                const networkCities = await geoService.searchCities(trimmedQuery, controller.signal);
+                setCities(networkCities.slice(0, 10));
             } catch (err) {
+                // Игнорируем ошибку отмены запроса, так как это штатное поведение UX
                 if (err.name === 'AbortError') return;
-                setError('Не удалось загрузить список городов');
+                setError(err.message || 'Произошла ошибка при поиске');
             } finally {
                 setIsLoading(false);
             }
         };
 
-        // Реализуем простейший Debounce (задержку запроса), чтобы не спамить сервер на каждую букву
-        const debounceTimer = setTimeout(() => {
-            searchCities();
-        }, 500);
+        // Дебаунс для предотвращения спама запросами в процессе ввода
+        const timeoutId = setTimeout(fetchCities, 500);
 
         return () => {
-            clearTimeout(debounceTimer);
-            controller.abort(); // Отменяем старый сетевой запрос, если пользователь продолжает печатать
+            clearTimeout(timeoutId);
+            controller.abort();
         };
     }, [query]);
 

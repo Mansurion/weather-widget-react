@@ -20,20 +20,11 @@ const CityListPage = () => {
                 onChange={(event) => setSearchQuery(event.target.value)}
             />
 
-
             <div className="city-list-container">
-                {/* Начальный экран-подсказка, когда поиск еще не начался */}
-                {searchQuery.trim().length === 0 && (
-                    <div className="welcome-state">
-                        <div className="welcome-icon">🔍</div>
-                        <p className="welcome-text">Начните вводить название города, чтобы узнать погоду</p>
-                    </div>
-                )}
-
-                {isLoading && <div className="loading">Ищем города...</div>}
+                {isLoading && <div className="loading">Загрузка списка городов...</div>}
                 {error && <div className="loading error">{error}</div>}
 
-                {!isLoading && !error && cities.length === 0 && searchQuery.trim().length >= 2 && (
+                {!isLoading && !error && cities.length === 0 && (
                     <div className="loading">Города не найдены</div>
                 )}
 

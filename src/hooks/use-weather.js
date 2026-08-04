@@ -1,19 +1,42 @@
-import { useFetch } from './use-fetch';
-import { prepareWeatherData } from '../utils/weatherAdapter';
+import { useState, useEffect, useCallback } from 'react';
+import { weatherService } from '../api/weatherService';
 
-// Хук принимает широту и долготу из URL параметров
 export const useWeather = (latitude, longitude) => {
-    const queryParams = new URLSearchParams({
-        latitude,
-        longitude,
-        current: 'temperature_2m',
-        daily: 'temperature_2m_max,temperature_2m_min',
-        timezone: 'auto'
-    }).toString();
+    const [weatherData, setWeatherData] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [updater, setUpdater] = useState(0);
 
-    const weatherUrl = `https://api.open-meteo.com/v1/forecast?${queryParams}`;
-    const { data: rawWeatherData, isLoading, error, refetch } = useFetch(weatherUrl);
-    const weatherData = prepareWeatherData(rawWeatherData);
+    const refetch = useCallback(() => {
+        setUpdater((prev) => prev + 1);
+    }, []);
+
+    useEffect(() => {
+        if (!latitude || !longitude) return;
+
+        const controller = new AbortController();
+
+        const fetchWeather = async () => {
+            setIsLoading(true);
+            setError(null);
+            try {
+                // Сервис возвращает уже адаптированные данные
+                const data = await weatherService.getWeather(latitude, longitude, controller.signal);
+                setWeatherData(data);
+            } catch (err) {
+                if (err.name === 'AbortError') return;
+                setError(err.message || 'Не удалось загрузить данные погоды');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchWeather();
+
+        return () => {
+            controller.abort(); // Жесткая отмена запроса при unmount или смене координат
+        };
+    }, [latitude, longitude, updater]);
 
     return { weatherData, isLoading, error, refetch };
 };
