@@ -1,25 +1,18 @@
 .city-list-page {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  box-sizing: border-box;
-  flex-grow: 1;
-}
-
-
-.city-list-container {
+    width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    width: 100%;
-    /* Растягиваем контейнер карточек */
     box-sizing: border-box;
+    flex-grow: 1;
+    max-height: 430px;
+    overflow: hidden;
 }
 
-
 .search-input {
-    background-color: #35363a;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: #292a2d;
     color: #ffffff;
     border: 1px solid #4f5357;
     padding: 12px 14px;
@@ -29,12 +22,23 @@
     max-width: 100%;
     outline: none;
     box-sizing: border-box;
+    margin-bottom: 20px;
     transition: border-color 0.2s ease;
 }
 
-
 .search-input:focus {
     border-color: #8ab4f8;
+}
+
+.city-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-y: auto;
+    flex-grow: 1;
+    padding-right: 4px;
 }
 
 .city-card-link {
@@ -56,17 +60,16 @@
 }
 
 .welcome-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
-  text-align: center;
-  animation: fadeIn 0.3s ease-in-out;
-  width: 100%; /* Форсируем растяжение пустого экрана на всю ширину виджета */
-  box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+    animation: fadeIn 0.3s ease-in-out;
+    width: 100%;
+    box-sizing: border-box;
 }
-
 
 .welcome-icon {
     font-size: 3rem;
@@ -80,6 +83,19 @@
     line-height: 1.5;
     margin: 0;
     max-width: 240px;
+}
+
+.city-list-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.city-list-container::-webkit-scrollbar-thumb {
+    background: #4f5357;
+    border-radius: 10px;
+}
+
+.city-list-container::-webkit-scrollbar-track {
+    background: transparent;
 }
 
 @keyframes fadeIn {

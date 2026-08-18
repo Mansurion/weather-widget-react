@@ -1,4 +1,4 @@
 export const ROUTES = Object.freeze({
     HOME: '/',
-    CITY_DETAILS: '/city/:cityName/:lat/:lon',
+    CITY_DETAILS: '/city/:cityId/:cityName',
 });

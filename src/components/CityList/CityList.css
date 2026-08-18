@@ -1,0 +1,32 @@
+.city-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-grow: 1;
+  padding-right: 4px;
+}
+
+.city-list__card-link {
+  display: block;
+  background-color: #35363a;
+  color: #ffffff;
+  text-decoration: none;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid #4f5357;
+  transition: all 0.2s ease;
+}
+
+.city-list__card-link:hover {
+  border-color: #8ab4f8;
+}
+
+.city-list__loading {
+  text-align: center;
+  color: #9aa0a6;
+  padding: 15px 0;
+}
+
+.city-list__scroll-trigger {
+  height: 1px;
+}

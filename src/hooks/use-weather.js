@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { weatherService } from '../api/weatherService';
 
-export const useWeather = (latitude, longitude) => {
+export const useWeather = (cityId) => {
     const [weatherData, setWeatherData] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -12,7 +12,7 @@ export const useWeather = (latitude, longitude) => {
     }, []);
 
     useEffect(() => {
-        if (!latitude || !longitude) return;
+        if (!cityId) return;
 
         const controller = new AbortController();
 
@@ -20,8 +20,8 @@ export const useWeather = (latitude, longitude) => {
             setIsLoading(true);
             setError(null);
             try {
-                // Сервис возвращает уже адаптированные данные
-                const data = await weatherService.getWeather(latitude, longitude, controller.signal);
+                // Сервис теперь принимает cityId и возвращает адаптированные данные погоды
+                const data = await weatherService.getWeather(cityId, controller.signal);
                 setWeatherData(data);
             } catch (err) {
                 if (err.name === 'AbortError') return;
@@ -34,9 +34,9 @@ export const useWeather = (latitude, longitude) => {
         fetchWeather();
 
         return () => {
-            controller.abort(); // Жесткая отмена запроса при unmount или смене координат
+            controller.abort();
         };
-    }, [latitude, longitude, updater]);
+    }, [cityId, updater]);
 
     return { weatherData, isLoading, error, refetch };
 };

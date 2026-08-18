@@ -4,22 +4,19 @@ import CityListPage from './pages/CityListPage/CityListPage';
 import CityDetailPage from './pages/CityDetailPage/CityDetailPage';
 import './App.css';
 
-const router = createBrowserRouter(
-  [
-    {
-      path: ROUTES.HOME,
-      element: <CityListPage />,
-    },
-    {
-      path: ROUTES.CITY_DETAILS,
-      element: <CityDetailPage />,
-    },
-  ],
+// Добавляем basename, чтобы роутер учитывал подпапку /weather-widget-react/
+const router = createBrowserRouter([
   {
-    basename: '/weather-widget-react', // Указываем роутеру базовый подпуть для GitHub Pages
-  }
-);
-
+    path: ROUTES.HOME,
+    element: <CityListPage />,
+  },
+  {
+    path: ROUTES.CITY_DETAILS,
+    element: <CityDetailPage />,
+  },
+], {
+  basename: '/weather-widget-react'
+});
 
 const App = () => {
   return (

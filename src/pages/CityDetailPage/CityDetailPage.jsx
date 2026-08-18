@@ -5,8 +5,8 @@ import { ROUTES } from '../../constants/routes';
 import './CityDetailPage.css';
 
 const CityDetailPage = () => {
-    const { cityName, lat, lon } = useParams();
-    const { weatherData, isLoading, error, refetch } = useWeather(lat, lon);
+    const { cityId, cityName } = useParams();
+    const { weatherData, isLoading, error, refetch } = useWeather(cityId);
 
     // Декодируем имя города из URL-безопасного формата (например, Нью-Йорк)
     const decodedCityName = cityName ? decodeURIComponent(cityName) : '';
@@ -25,10 +25,11 @@ const CityDetailPage = () => {
 
             <button
                 id="refresh-data-btn"
+                className="city-detail-page__refresh-btn" /* Перевели на БЭМ */
                 disabled={isLoading}
                 onClick={refetch}
             >
-                {isLoading ? 'Секунду...' : 'Обновить данные'}
+                {isLoading ? 'Обновляем...' : 'Обновить данные'}
             </button>
         </div>
     );

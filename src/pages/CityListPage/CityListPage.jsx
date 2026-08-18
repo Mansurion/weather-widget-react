@@ -1,11 +1,18 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useCitySearch } from '../../hooks/use-city-search';
+import { useIntersectionObserver } from '../../hooks/use-intersection-observer';
+import CityList from '../../components/CityList/CityList';
 import './CityListPage.css';
 
 const CityListPage = () => {
     const [searchQuery, setSearchQuery] = useState('');
-    const { cities, isLoading, error } = useCitySearch(searchQuery);
+
+    // Подключаем бизнес-логику поиска и пагинации
+    const { cities, isLoading, error, hasMore, loadMore } = useCitySearch(searchQuery);
+
+    // Инициализируем наблюдатель скролла. 
+    // Он возвращает callback-реф, который мы прокинем внутрь компонента CityList
+    const scrollTriggerRef = useIntersectionObserver(loadMore, !isLoading && hasMore);
 
     return (
         <div className="city-list-page">
@@ -21,27 +28,13 @@ const CityListPage = () => {
             />
 
             <div className="city-list-container">
-                {isLoading && <div className="loading">Загрузка списка городов...</div>}
-                {error && <div className="loading error">{error}</div>}
-
-                {!isLoading && !error && cities.length === 0 && (
-                    <div className="loading">Города не найдены</div>
-                )}
-
-                {!isLoading && !error && cities.map((city) => {
-                    const regionText = city.admin ? `, ${city.admin}` : '';
-                    const countryText = city.country ? ` (${city.country})` : '';
-
-                    return (
-                        <Link
-                            key={city.id}
-                            to={`/city/${encodeURIComponent(city.name)}/${city.latitude}/${city.longitude}`}
-                            className="city-card-link"
-                        >
-                            {city.name}{regionText}{countryText}
-                        </Link>
-                    );
-                })}
+                <CityList
+                    cities={cities}
+                    isLoading={isLoading}
+                    error={error}
+                    hasMore={hasMore}
+                    scrollTriggerRef={scrollTriggerRef}
+                />
             </div>
         </div>
     );

@@ -1,16 +1,20 @@
 import './WeatherDisplay.css';
 
 const WeatherDisplay = ({ weatherData, isLoading, error }) => {
-    if (isLoading) {
-        return <div className="loading">Связь с метео-сервером...</div>;
-    }
-
+    // Показываем ошибку, если она произошла
     if (error) {
         return <div className="loading">Ошибка получения данных</div>;
     }
 
+    // Если это ПЕРВИЧНАЯ загрузка (данных еще нет и идет запрос) — показываем полноэкранный лоадер
+    if (isLoading && !weatherData) {
+        return <div className="loading">Связь с метео-сервером...</div>;
+    }
+
+    // Если данных нет вообще (и загрузка не идет) — ничего не рендерим
     if (!weatherData) return null;
 
+    // В остальных случаях (даже если идет фоновое обновление isLoading === true) — контент остается на месте!
     return (
         <div className="weather-info">
             <div className="current-temp-block">
