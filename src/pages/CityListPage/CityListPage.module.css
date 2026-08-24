@@ -1,0 +1,111 @@
+.city-list-page {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    flex-grow: 1;
+    max-height: 430px;
+    overflow: hidden;
+}
+
+.search-input {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: #292a2d;
+    color: #ffffff;
+    border: 1px solid #4f5357;
+    padding: 12px 14px;
+    font-size: 1rem;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 100%;
+    outline: none;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+    transition: border-color 0.2s ease;
+}
+
+.search-input:focus {
+    border-color: #8ab4f8;
+}
+
+.city-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-y: auto;
+    flex-grow: 1;
+    padding-right: 4px;
+}
+
+.city-card-link {
+    display: block;
+    background-color: #35363a;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1px solid #4f5357;
+    font-size: 1.1rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.city-card-link:hover {
+    background-color: #3c4043;
+    border-color: #8ab4f8;
+}
+
+.welcome-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+    animation: fadeIn 0.3s ease-in-out;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.welcome-icon {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    opacity: 0.7;
+}
+
+.welcome-text {
+    color: #9aa0a6;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin: 0;
+    max-width: 240px;
+}
+
+.city-list-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.city-list-container::-webkit-scrollbar-thumb {
+    background: #4f5357;
+    border-radius: 10px;
+}
+
+.city-list-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

@@ -1,38 +1,42 @@
-import { useState, useEffect } from 'react';
-import { useFetch } from './use-fetch';
-import { CITIES } from '../data';
-import { prepareWeatherData } from '../utils/weatherAdapter';
+import { useState, useEffect, useCallback } from 'react';
+import { weatherService } from '../api/weatherService';
 
-export const useWeather = () => {
-    const [selectedCityId, setSelectedCityId] = useState(() => {
-        return localStorage.getItem('selectedCityId') || 'msk';
-    });
+export const useWeather = (cityId) => {
+    const [weatherData, setWeatherData] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [updater, setUpdater] = useState(0);
 
-    const currentCity = CITIES.find((city) => city.id === selectedCityId) || CITIES[0];
-
-    const queryParams = new URLSearchParams({
-        latitude: currentCity.latitude,
-        longitude: currentCity.longitude,
-        current: 'temperature_2m',
-        daily: 'temperature_2m_max,temperature_2m_min',
-        timezone: 'auto'
-    }).toString();
-
-    const weatherUrl = `https://api.open-meteo.com/v1/forecast?${queryParams}`;
-    const { data: rawWeatherData, isLoading, error, refetch } = useFetch(weatherUrl);
-
-    const weatherData = prepareWeatherData(rawWeatherData);
+    const refetch = useCallback(() => {
+        setUpdater((prev) => prev + 1);
+    }, []);
 
     useEffect(() => {
-        localStorage.setItem('selectedCityId', selectedCityId);
-    }, [selectedCityId]);
+        if (!cityId) return;
 
-    return {
-        selectedCityId,
-        setSelectedCityId,
-        weatherData,
-        isLoading,
-        error,
-        refetch
-    };
+        const controller = new AbortController();
+
+        const fetchWeather = async () => {
+            setIsLoading(true);
+            setError(null);
+            try {
+                // Сервис теперь принимает cityId и возвращает адаптированные данные погоды
+                const data = await weatherService.getWeather(cityId, controller.signal);
+                setWeatherData(data);
+            } catch (err) {
+                if (err.name === 'AbortError') return;
+                setError(err.message || 'Не удалось загрузить данные погоды');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchWeather();
+
+        return () => {
+            controller.abort();
+        };
+    }, [cityId, updater]);
+
+    return { weatherData, isLoading, error, refetch };
 };
