@@ -1,8 +1,9 @@
+// src/pages/CityListPage/CityListPage.jsx
 import { useState } from 'react';
 import { useCitySearch } from '../../hooks/use-city-search';
 import { useIntersectionObserver } from '../../hooks/use-intersection-observer';
-import CityList from '../../components/CityList/CityList';
-import './CityListPage.css';
+import { CityList } from '../../components/CityList/CityList';
+import styles from './CityListPage.module.css';
 
 export const CityListPage = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -15,19 +16,19 @@ export const CityListPage = () => {
     const scrollTriggerRef = useIntersectionObserver(loadMore, !isLoading && hasMore);
 
     return (
-        <div className="city-list-page">
+        <div className={styles['city-list-page']}>
             <input
                 type="text"
                 id="city-search"
                 name="citySearch"
-                className="search-input"
+                className={styles['search-input']}
                 placeholder="Введите название города..."
                 aria-label="Поиск города"
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
             />
 
-            <div className="city-list-container">
+            <div className={styles['city-list-container']}>
                 <CityList
                     cities={cities}
                     isLoading={isLoading}
