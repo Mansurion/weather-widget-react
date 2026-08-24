@@ -1,9 +1,7 @@
 import { Link } from 'react-router-dom';
 import './CityList.css';
 
-// Компонент CityList отвечает за рендеринг списка городов,
-// обработку состояний загрузки, ошибок и отображение пустых результатов.
-const CityList = ({
+export const CityList = ({
     cities,
     isLoading,
     error,
@@ -20,7 +18,7 @@ const CityList = ({
             {cities.map((city) => (
                 <Link
                     key={city.id}
-                    to={`/city/${city.id}/${encodeURIComponent(city.name)}`}
+                    to={`/city/${city.id}`}
                     className="city-list__card-link"
                 >
                     {city.name}{city.admin ? `, ${city.admin}` : ''}{city.country ? ` (${city.country})` : ''}
@@ -32,5 +30,3 @@ const CityList = ({
         </div>
     );
 };
-
-export default CityList;

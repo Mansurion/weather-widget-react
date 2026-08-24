@@ -4,7 +4,7 @@ import { useIntersectionObserver } from '../../hooks/use-intersection-observer';
 import CityList from '../../components/CityList/CityList';
 import './CityListPage.css';
 
-const CityListPage = () => {
+export const CityListPage = () => {
     const [searchQuery, setSearchQuery] = useState('');
 
     // Подключаем бизнес-логику поиска и пагинации
@@ -39,5 +39,3 @@ const CityListPage = () => {
         </div>
     );
 };
-
-export default CityListPage;

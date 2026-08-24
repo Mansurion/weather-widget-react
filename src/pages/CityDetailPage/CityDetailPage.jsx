@@ -4,12 +4,9 @@ import { useWeather } from '../../hooks/use-weather';
 import { ROUTES } from '../../constants/routes';
 import './CityDetailPage.css';
 
-const CityDetailPage = () => {
-    const { cityId, cityName } = useParams();
+export const CityDetailPage = () => {
+    const { cityId } = useParams();
     const { weatherData, isLoading, error, refetch } = useWeather(cityId);
-
-    // Декодируем имя города из URL-безопасного формата (например, Нью-Йорк)
-    const decodedCityName = cityName ? decodeURIComponent(cityName) : '';
 
     return (
         <div className="city-detail-page">
@@ -17,9 +14,6 @@ const CityDetailPage = () => {
             <Link to={ROUTES.HOME} className="back-btn">
                 ← К поиску
             </Link>
-
-            {/* Выводим название города для улучшения UX */}
-            {decodedCityName && <h2 className="current-label">{decodedCityName}</h2>}
 
             <WeatherDisplay weatherData={weatherData} isLoading={isLoading} error={error} />
 
@@ -34,5 +28,3 @@ const CityDetailPage = () => {
         </div>
     );
 };
-
-export default CityDetailPage;
