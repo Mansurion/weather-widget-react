@@ -58,8 +58,8 @@ src/
       CityList.jsx
       CityList.module.css
     WeatherDisplay/
-      WeatherDisplay.css
       WeatherDisplay.jsx
+      WeatherDisplay.module.css
   constants/
     actionTypes.js
     routes.js
@@ -134,42 +134,7 @@ This section contains the contents of the repository's files.
 <svg xmlns="http://www.w3.org/2000/svg" width="77" height="47" fill="none" aria-labelledby="vite-logo-title" viewBox="0 0 77 47"><title id="vite-logo-title">Vite</title><style>.parenthesis{fill:#000}@media (prefers-color-scheme:dark){.parenthesis{fill:#fff}}</style><path fill="#9135ff" d="M40.151 45.71c-.663.844-2.02.374-2.02-.699V34.708a2.26 2.26 0 0 0-2.262-2.262H24.493c-.92 0-1.457-1.04-.92-1.788l7.479-10.471c1.07-1.498 0-3.578-1.842-3.578H15.443c-.92 0-1.456-1.04-.92-1.788l9.696-13.576c.213-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.472c-1.07 1.497 0 3.578 1.842 3.578h11.376c.944 0 1.474 1.087.89 1.83L40.153 45.712z"/><mask id="a" width="48" height="47" x="14" y="0" maskUnits="userSpaceOnUse" style="mask-type:alpha"><path fill="#000" d="M40.047 45.71c-.663.843-2.02.374-2.02-.699V34.708a2.26 2.26 0 0 0-2.262-2.262H24.389c-.92 0-1.457-1.04-.92-1.788l7.479-10.472c1.07-1.497 0-3.578-1.842-3.578H15.34c-.92 0-1.456-1.04-.92-1.788l9.696-13.575c.213-.297.556-.474.92-.474H53.93c.92 0 1.456 1.04.92 1.788L47.37 13.03c-1.07 1.498 0 3.578 1.842 3.578h11.376c.944 0 1.474 1.088.89 1.831L40.049 45.712z"/></mask><g mask="url(#a)"><g filter="url(#b)"><ellipse cx="5.508" cy="14.704" fill="#eee6ff" rx="5.508" ry="14.704" transform="rotate(269.814 20.96 11.29)scale(-1 1)"/></g><g filter="url(#c)"><ellipse cx="10.399" cy="29.851" fill="#eee6ff" rx="10.399" ry="29.851" transform="rotate(89.814 -16.902 -8.275)scale(1 -1)"/></g><g filter="url(#d)"><ellipse cx="5.508" cy="30.487" fill="#8900ff" rx="5.508" ry="30.487" transform="rotate(89.814 -19.197 -7.127)scale(1 -1)"/></g><g filter="url(#e)"><ellipse cx="5.508" cy="30.599" fill="#8900ff" rx="5.508" ry="30.599" transform="rotate(89.814 -25.928 4.177)scale(1 -1)"/></g><g filter="url(#f)"><ellipse cx="5.508" cy="30.599" fill="#8900ff" rx="5.508" ry="30.599" transform="rotate(89.814 -25.738 5.52)scale(1 -1)"/></g><g filter="url(#g)"><ellipse cx="14.072" cy="22.078" fill="#eee6ff" rx="14.072" ry="22.078" transform="rotate(93.35 31.245 55.578)scale(-1 1)"/></g><g filter="url(#h)"><ellipse cx="3.47" cy="21.501" fill="#8900ff" rx="3.47" ry="21.501" transform="rotate(89.009 35.419 55.202)scale(-1 1)"/></g><g filter="url(#i)"><ellipse cx="3.47" cy="21.501" fill="#8900ff" rx="3.47" ry="21.501" transform="rotate(89.009 35.419 55.202)scale(-1 1)"/></g><g filter="url(#j)"><ellipse cx="14.592" cy="9.743" fill="#8900ff" rx="4.407" ry="29.108" transform="rotate(39.51 14.592 9.743)"/></g><g filter="url(#k)"><ellipse cx="61.728" cy="-5.321" fill="#8900ff" rx="4.407" ry="29.108" transform="rotate(37.892 61.728 -5.32)"/></g><g filter="url(#l)"><ellipse cx="55.618" cy="7.104" fill="#00c2ff" rx="5.971" ry="9.665" transform="rotate(37.892 55.618 7.104)"/></g><g filter="url(#m)"><ellipse cx="12.326" cy="39.103" fill="#8900ff" rx="4.407" ry="29.108" transform="rotate(37.892 12.326 39.103)"/></g><g filter="url(#n)"><ellipse cx="12.326" cy="39.103" fill="#8900ff" rx="4.407" ry="29.108" transform="rotate(37.892 12.326 39.103)"/></g><g filter="url(#o)"><ellipse cx="49.857" cy="30.678" fill="#8900ff" rx="4.407" ry="29.108" transform="rotate(37.892 49.857 30.678)"/></g><g filter="url(#p)"><ellipse cx="52.623" cy="33.171" fill="#00c2ff" rx="5.971" ry="15.297" transform="rotate(37.892 52.623 33.17)"/></g></g><path d="M6.919 0c-9.198 13.166-9.252 33.575 0 46.789h6.215c-9.25-13.214-9.196-33.623 0-46.789zm62.424 0h-6.215c9.198 13.166 9.252 33.575 0 46.789h6.215c9.25-13.214 9.196-33.623 0-46.789" class="parenthesis"/><defs><filter id="b" width="60.045" height="41.654" x="-5.564" y="16.92" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="7.659"/></filter><filter id="c" width="90.34" height="51.437" x="-40.407" y="-6.762" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="7.659"/></filter><filter id="d" width="79.355" height="29.4" x="-35.435" y="2.801" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="4.596"/></filter><filter id="e" width="79.579" height="29.4" x="-30.84" y="20.8" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="4.596"/></filter><filter id="f" width="79.579" height="29.4" x="-29.307" y="21.949" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="4.596"/></filter><filter id="g" width="74.749" height="58.852" x="29.961" y="-17.13" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="7.659"/></filter><filter id="h" width="61.377" height="25.362" x="37.754" y="3.055" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="4.596"/></filter><filter id="i" width="61.377" height="25.362" x="37.754" y="3.055" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="4.596"/></filter><filter id="j" width="56.045" height="63.649" x="-13.43" y="-22.082" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="4.596"/></filter><filter id="k" width="54.814" height="64.646" x="34.321" y="-37.644" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="4.596"/></filter><filter id="l" width="33.541" height="35.313" x="38.847" y="-10.552" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="4.596"/></filter><filter id="m" width="54.814" height="64.646" x="-15.081" y="6.78" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="4.596"/></filter><filter id="n" width="54.814" height="64.646" x="-15.081" y="6.78" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="4.596"/></filter><filter id="o" width="54.814" height="64.646" x="22.45" y="-1.645" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="4.596"/></filter><filter id="p" width="39.409" height="43.623" x="32.919" y="11.36" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_2002_17286" stdDeviation="4.596"/></filter></defs></svg>
 </file>
 
-<file path="src/components/CityList/CityList.module.css">
-.city-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  flex-grow: 1;
-  padding-right: 4px;
-}
-
-.city-list__card-link {
-  display: block;
-  background-color: #35363a;
-  color: #ffffff;
-  text-decoration: none;
-  padding: 14px 16px;
-  border-radius: 10px;
-  border: 1px solid #4f5357;
-  transition: all 0.2s ease;
-}
-
-.city-list__card-link:hover {
-  border-color: #8ab4f8;
-}
-
-.city-list__loading {
-  text-align: center;
-  color: #9aa0a6;
-  padding: 15px 0;
-}
-
-.city-list__scroll-trigger {
-  height: 1px;
-}
-</file>
-
-<file path="src/components/WeatherDisplay/WeatherDisplay.css">
+<file path="src/components/WeatherDisplay/WeatherDisplay.module.css">
 .weather-info {
     width: 100%;
     display: flex;
@@ -1661,6 +1626,45 @@ export const fetchWithTimeout = async (url, options = {}, timeoutMs = 5000) => {
 };
 </file>
 
+<file path="src/components/CityList/CityList.module.css">
+.city-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-grow: 1;
+  padding-right: 4px;
+}
+
+.city-list__card-link {
+  display: block;
+  background-color: #35363a;
+  color: #ffffff;
+  text-decoration: none;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid #4f5357;
+  transition: all 0.2s ease;
+}
+
+.city-list__card-link:hover {
+  border-color: #8ab4f8;
+}
+
+.city-list__loading {
+  text-align: center;
+  color: #9aa0a6;
+  padding: 15px 0;
+}
+
+.city-list__scroll-trigger {
+  height: 1px;
+}
+
+.city-list__loading--error {
+  color: #ff6b6b;
+}
+</file>
+
 <file path="src/App.css">
 .widget {
     background-color: #292a2d;
@@ -1865,123 +1869,11 @@ export const weatherService = {
 };
 </file>
 
-<file path="src/components/CityList/CityList.jsx">
-import { Link } from 'react-router-dom';
-import styles from './CityList.module.css';
-
-const CITY_LIST_CLASSES = {
-    CITY_LIST: 'city-list',
-    LOADING: 'city-list__loading',
-    LOADING_ERROR: 'city-list__loading--error',
-    CARD_LINK: 'city-list__card-link',
-    SCROLL_TRIGGER: 'city-list__scroll-trigger',
-};
-
-const CITY_LIST_LABELS = {
-    NOT_FOUND: 'Города не найдены',
-    INITIAL_LOADING: 'Загрузка...',
-    INCREMENTAL_LOADING: 'Подгружаем...',
-};
-
-export const CityList = ({
-    cities,
-    isLoading,
-    error,
-    hasMore,
-    scrollTriggerRef
-}) => {
-    const isListEmpty = cities.length === 0;
-
-    const renderCityCard = (city) => {
-        const adminPart = city.admin ? `, ${city.admin}` : '';
-        const countryPart = city.country ? `, ${city.country}` : '';
-
-        return (
-            <Link
-                key={city.id}
-                to={`/city/${city.id}`}
-                className={styles[CITY_LIST_CLASSES.CARD_LINK]}
-            >
-                {city.name}{adminPart}{countryPart}
-            </Link>
-        );
-    };
-
-    return (
-        <div className={styles[CITY_LIST_CLASSES.CITY_LIST]}>
-            {error && (
-                <div className={`${styles[CITY_LIST_CLASSES.LOADING]} ${styles[CITY_LIST_CLASSES.LOADING_ERROR]}`}>
-                    {error}
-                </div>
-            )}
-
-            {!isLoading && !error && isListEmpty && (
-                <div className={styles[CITY_LIST_CLASSES.LOADING]}>
-                    {CITY_LIST_LABELS.NOT_FOUND}
-                </div>
-            )}
-
-            {cities.map(renderCityCard)}
-
-            {isLoading && (
-                <div className={styles[CITY_LIST_CLASSES.LOADING]}>
-                    {isListEmpty ? CITY_LIST_LABELS.INITIAL_LOADING : CITY_LIST_LABELS.INCREMENTAL_LOADING}
-                </div>
-            )}
-
-            {hasMore && !error && !isListEmpty && (
-                <div ref={scrollTriggerRef} className={styles[CITY_LIST_CLASSES.SCROLL_TRIGGER]} />
-            )}
-        </div>
-    );
-};
-</file>
-
-<file path="src/components/WeatherDisplay/WeatherDisplay.jsx">
-import './WeatherDisplay.css';
-
-const WeatherDisplay = ({ weatherData, isLoading, error }) => {
-    // Показываем ошибку, если она произошла
-    if (error) {
-        return <div className="loading">Ошибка получения данных</div>;
-    }
-
-    // Если это ПЕРВИЧНАЯ загрузка (данных еще нет и идет запрос) — показываем полноэкранный лоадер
-    if (isLoading && !weatherData) {
-        return <div className="loading">Связь с метео-сервером...</div>;
-    }
-
-    // Если данных нет вообще (и загрузка не идет) — ничего не рендерим
-    if (!weatherData) return null;
-
-    // В остальных случаях (даже если идет фоновое обновление isLoading === true) — контент остается на месте!
-    return (
-        <div className="weather-info">
-            <div className="current-temp-block">
-                <span className="current-label">Сейчас</span>
-                <span className="current-value">{weatherData.currentTemperatureText}</span>
-            </div>
-
-            {weatherData.forecast.map(({ id, dayLabel, minTemperatureText, maxTemperatureText }) => (
-                <div className="forecast-row" key={id}>
-                    <span className="day-name">{dayLabel}</span>
-                    <span className="day-temp">
-                        {minTemperatureText} / {maxTemperatureText}
-                    </span>
-                </div>
-            ))}
-        </div>
-    );
-};
-
-export default WeatherDisplay;
-</file>
-
 <file path="src/constants/routes.js">
-export const ROUTES = Object.freeze({
+export const ROUTES = {
   HOME: '/',
   CITY_DETAILS: '/city/:cityId',
-});
+};
 </file>
 
 <file path="src/utils/weatherAdapter.js">
@@ -2090,6 +1982,130 @@ export const geoService = {
 };
 </file>
 
+<file path="src/components/CityList/CityList.jsx">
+import { Link } from 'react-router-dom';
+import styles from './CityList.module.css';
+
+const CITY_LIST_CLASSES = {
+    CITY_LIST: 'city-list',
+    LOADING: 'city-list__loading',
+    LOADING_ERROR: 'city-list__loading--error',
+    CARD_LINK: 'city-list__card-link',
+    SCROLL_TRIGGER: 'city-list__scroll-trigger',
+};
+
+const CITY_LIST_LABELS = {
+    NOT_FOUND: 'Города не найдены',
+    INITIAL_LOADING: 'Загрузка...',
+    INCREMENTAL_LOADING: 'Подгружаем...',
+};
+
+export const CityList = ({
+    cities,
+    isLoading,
+    error,
+    hasMore,
+    scrollTriggerRef
+}) => {
+    const isListEmpty = cities.length === 0;
+
+    const renderCityCard = (city) => {
+        const adminPart = city.admin ? `, ${city.admin}` : '';
+        const countryPart = city.country ? `, ${city.country}` : '';
+
+        return (
+            <Link
+                key={city.id}
+                to={`/city/${city.id}`}
+                className={styles[CITY_LIST_CLASSES.CARD_LINK]}
+            >
+                {city.name}{adminPart}{countryPart}
+            </Link>
+        );
+    };
+
+    return (
+        <div className={styles[CITY_LIST_CLASSES.CITY_LIST]}>
+            {error && (
+                <div className={`${styles[CITY_LIST_CLASSES.LOADING]} ${styles[CITY_LIST_CLASSES.LOADING_ERROR]}`}>
+                    {error}
+                </div>
+            )}
+
+            {!isLoading && !error && isListEmpty && (
+                <div className={styles[CITY_LIST_CLASSES.LOADING]}>
+                    {CITY_LIST_LABELS.NOT_FOUND}
+                </div>
+            )}
+
+            {cities.map(renderCityCard)}
+
+            {isLoading && (
+                <div className={styles[CITY_LIST_CLASSES.LOADING]}>
+                    {isListEmpty ? CITY_LIST_LABELS.INITIAL_LOADING : CITY_LIST_LABELS.INCREMENTAL_LOADING}
+                </div>
+            )}
+
+            {hasMore && !error && !isListEmpty && (
+                <div ref={scrollTriggerRef} className={styles[CITY_LIST_CLASSES.SCROLL_TRIGGER]} />
+            )}
+        </div>
+    );
+};
+</file>
+
+<file path="src/components/WeatherDisplay/WeatherDisplay.jsx">
+import styles from './WeatherDisplay.module.css';
+
+const WEATHER_DISPLAY_CLASSES = {
+    LOADING: 'loading',
+    WEATHER_INFO: 'weather-info',
+    CURRENT_TEMP_BLOCK: 'current-temp-block',
+    CURRENT_LABEL: 'current-label',
+    CURRENT_VALUE: 'current-value',
+    FORECAST_ROW: 'forecast-row',
+    DAY_NAME: 'day-name',
+    DAY_TEMP: 'day-temp',
+};
+
+const WEATHER_DISPLAY_LABELS = {
+    ERROR: 'Ошибка получения данных',
+    LOADING_SERVER: 'Связь с метео-сервером...',
+    NOW: 'Сейчас',
+};
+
+export const WeatherDisplay = ({ weatherData, isLoading, error }) => {
+    const isPrimaryLoading = isLoading && !weatherData;
+
+    if (error) {
+        return <div className={styles[WEATHER_DISPLAY_CLASSES.LOADING]}>{WEATHER_DISPLAY_LABELS.ERROR}</div>;
+    }
+
+    if (isPrimaryLoading) {
+        return <div className={styles[WEATHER_DISPLAY_CLASSES.LOADING]}>{WEATHER_DISPLAY_LABELS.LOADING_SERVER}</div>;
+    }
+
+    if (!weatherData) return null;
+
+    return (
+        <div className={styles[WEATHER_DISPLAY_CLASSES.WEATHER_INFO]}>
+            <div className={styles[WEATHER_DISPLAY_CLASSES.CURRENT_TEMP_BLOCK]}>
+                <span className={styles[WEATHER_DISPLAY_CLASSES.CURRENT_LABEL]}>{WEATHER_DISPLAY_LABELS.NOW}</span>
+                <span className={styles[WEATHER_DISPLAY_CLASSES.CURRENT_VALUE]}>{weatherData.currentTemperatureText}</span>
+            </div>
+            {weatherData.forecast.map(({ id, dayLabel, minTemperatureText, maxTemperatureText }) => (
+                <div className={styles[WEATHER_DISPLAY_CLASSES.FORECAST_ROW]} key={id}>
+                    <span className={styles[WEATHER_DISPLAY_CLASSES.DAY_NAME]}>{dayLabel}</span>
+                    <span className={styles[WEATHER_DISPLAY_CLASSES.DAY_TEMP]}>
+                        {minTemperatureText} / {maxTemperatureText}
+                    </span>
+                </div>
+            ))}
+        </div>
+    );
+};
+</file>
+
 <file path="src/hooks/use-city-search.js">
 import { useState, useEffect, useCallback } from 'react';
 import { geoService } from '../api/geoService';
@@ -2168,39 +2184,6 @@ export const useCitySearch = (query) => {
 };
 </file>
 
-<file path="src/pages/CityDetailPage/CityDetailPage.jsx">
-import { useParams, Link } from 'react-router-dom';
-import WeatherDisplay from '../../components/WeatherDisplay/WeatherDisplay';
-import { useWeather } from '../../hooks/use-weather';
-import { ROUTES } from '../../constants/routes';
-import styles from './CityDetailPage.module.css';
-
-export const CityDetailPage = () => {
-    const { cityId } = useParams();
-    const { weatherData, isLoading, error, refetch } = useWeather(cityId);
-
-    return (
-        <div className={styles['city-detail-page']}>
-            {/* Кнопка возврата на главную страницу */}
-            <Link to={ROUTES.HOME} className={styles['back-btn']}>
-                ← К поиску
-            </Link>
-
-            <WeatherDisplay weatherData={weatherData} isLoading={isLoading} error={error} />
-
-            <button
-                id="refresh-data-btn"
-                className={styles['city-detail-page__refresh-btn']}
-                disabled={isLoading}
-                onClick={refetch}
-            >
-                {isLoading ? 'Обновляем...' : 'Обновить данные'}
-            </button>
-        </div>
-    );
-};
-</file>
-
 <file path="vite.config.js">
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
@@ -2267,46 +2250,39 @@ export const useWeather = (cityId) => {
 };
 </file>
 
-<file path="src/pages/CityListPage/CityListPage.jsx">
-// src/pages/CityListPage/CityListPage.jsx
-import { useState } from 'react';
-import { useCitySearch } from '../../hooks/use-city-search';
-import { useIntersectionObserver } from '../../hooks/use-intersection-observer';
-import { CityList } from '../../components/CityList/CityList';
-import styles from './CityListPage.module.css';
+<file path="src/pages/CityDetailPage/CityDetailPage.jsx">
+import { useParams, Link } from 'react-router-dom';
+import { WeatherDisplay } from '../../components/WeatherDisplay/WeatherDisplay';
+import { useWeather } from '../../hooks/use-weather';
+import { ROUTES } from '../../constants/routes';
+import styles from './CityDetailPage.module.css';
 
-export const CityListPage = () => {
-    const [searchQuery, setSearchQuery] = useState('');
+const CITY_DETAIL_LABELS = {
+    BACK_BUTTON: '← К поиску',
+    REFRESH_LOADING: 'Обновляем...',
+    REFRESH_READY: 'Обновить данные',
+};
 
-    // Подключаем бизнес-логику поиска и пагинации
-    const { cities, isLoading, error, hasMore, loadMore } = useCitySearch(searchQuery);
-
-    // Инициализируем наблюдатель скролла. 
-    // Он возвращает callback-реф, который мы прокинем внутрь компонента CityList
-    const scrollTriggerRef = useIntersectionObserver(loadMore, !isLoading && hasMore);
+export const CityDetailPage = () => {
+    const { cityId } = useParams();
+    const { weatherData, isLoading, error, refetch } = useWeather(cityId);
 
     return (
-        <div className={styles['city-list-page']}>
-            <input
-                type="text"
-                id="city-search"
-                name="citySearch"
-                className={styles['search-input']}
-                placeholder="Введите название города..."
-                aria-label="Поиск города"
-                value={searchQuery}
-                onChange={(event) => setSearchQuery(event.target.value)}
-            />
+        <div className={styles['city-detail-page']}>
+            <Link to={ROUTES.HOME} className={styles['back-btn']}>
+                {CITY_DETAIL_LABELS.BACK_BUTTON}
+            </Link>
 
-            <div className={styles['city-list-container']}>
-                <CityList
-                    cities={cities}
-                    isLoading={isLoading}
-                    error={error}
-                    hasMore={hasMore}
-                    scrollTriggerRef={scrollTriggerRef}
-                />
-            </div>
+            <WeatherDisplay weatherData={weatherData} isLoading={isLoading} error={error} />
+
+            <button
+                id="refresh-data-btn"
+                className={styles['city-detail-page__refresh-btn']}
+                disabled={isLoading}
+                onClick={refetch}
+            >
+                {isLoading ? CITY_DETAIL_LABELS.REFRESH_LOADING : CITY_DETAIL_LABELS.REFRESH_READY}
+            </button>
         </div>
     );
 };
@@ -2346,6 +2322,52 @@ export const CityListPage = () => {
     "vite": "^8.1.1"
   }
 }
+</file>
+
+<file path="src/pages/CityListPage/CityListPage.jsx">
+import { useState } from 'react';
+import { useCitySearch } from '../../hooks/use-city-search';
+import { useIntersectionObserver } from '../../hooks/use-intersection-observer';
+import { CityList } from '../../components/CityList/CityList';
+import styles from './CityListPage.module.css';
+
+const CITY_LIST_PAGE_LABELS = {
+    SEARCH_PLACEHOLDER: 'Введите название города...',
+    SEARCH_ARIA_LABEL: 'Поиск города',
+};
+
+export const CityListPage = () => {
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const { cities, isLoading, error, hasMore, loadMore } = useCitySearch(searchQuery);
+
+    const scrollTriggerRef = useIntersectionObserver(loadMore, !isLoading && hasMore);
+
+    return (
+        <div className={styles['city-list-page']}>
+            <input
+                type="text"
+                id="city-search"
+                name="citySearch"
+                className={styles['search-input']}
+                placeholder={CITY_LIST_PAGE_LABELS.SEARCH_PLACEHOLDER}
+                aria-label={CITY_LIST_PAGE_LABELS.SEARCH_ARIA_LABEL}
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+            />
+
+            <div className={styles['city-list-container']}>
+                <CityList
+                    cities={cities}
+                    isLoading={isLoading}
+                    error={error}
+                    hasMore={hasMore}
+                    scrollTriggerRef={scrollTriggerRef}
+                />
+            </div>
+        </div>
+    );
+};
 </file>
 
 <file path="src/App.jsx">
