@@ -30,3 +30,7 @@
 .city-list__scroll-trigger {
   height: 1px;
 }
+
+.city-list__loading--error {
+  color: #ff6b6b;
+}

@@ -1,8 +1,14 @@
 import { useParams, Link } from 'react-router-dom';
-import WeatherDisplay from '../../components/WeatherDisplay/WeatherDisplay';
+import { WeatherDisplay } from '../../components/WeatherDisplay/WeatherDisplay';
 import { useWeather } from '../../hooks/use-weather';
 import { ROUTES } from '../../constants/routes';
 import styles from './CityDetailPage.module.css';
+
+const CITY_DETAIL_LABELS = {
+    BACK_BUTTON: '← К поиску',
+    REFRESH_LOADING: 'Обновляем...',
+    REFRESH_READY: 'Обновить данные',
+};
 
 export const CityDetailPage = () => {
     const { cityId } = useParams();
@@ -10,9 +16,8 @@ export const CityDetailPage = () => {
 
     return (
         <div className={styles['city-detail-page']}>
-            {/* Кнопка возврата на главную страницу */}
             <Link to={ROUTES.HOME} className={styles['back-btn']}>
-                ← К поиску
+                {CITY_DETAIL_LABELS.BACK_BUTTON}
             </Link>
 
             <WeatherDisplay weatherData={weatherData} isLoading={isLoading} error={error} />
@@ -23,7 +28,7 @@ export const CityDetailPage = () => {
                 disabled={isLoading}
                 onClick={refetch}
             >
-                {isLoading ? 'Обновляем...' : 'Обновить данные'}
+                {isLoading ? CITY_DETAIL_LABELS.REFRESH_LOADING : CITY_DETAIL_LABELS.REFRESH_READY}
             </button>
         </div>
     );
